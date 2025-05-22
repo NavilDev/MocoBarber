@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>Reserva tu corte</title>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class=" bg-dark text-light " style="font-family: 'Permanent Marker', cursive;">
+
+    
+  <nav class="navbar navbar-expand-lg navbar-light bg-dark" style="margin-top: 20px;">
+    <div class="container position-relative d-flex justify-content-center py-4">
+  
+      <!-- Logo centrado y responsive -->
+      <a class="navbar-brand position-absolute start-50 translate-middle-x" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='images/moco.png') }}"
+             alt="Logo"
+             class="img-fluid"
+             style="max-height: 150px; margin-top: 1px;">
+      </a>
+  
+    </div>
+  </nav>
+  
+  <div class="container" style="margin-top: 50px;">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-6">
+        <h2 class="mb-4 text-center">Cancela tu cita</h2>
+  
+        <form method="POST">
+          <div class="mb-3">
+            <input type="tel" pattern="\d{9}" name="telefono" class="form-control"   placeholder="Teléfono" required>
+          </div>
+  
+          <div class="mb-3">
+            <input type="date" name="fecha" class="form-control" required>
+          </div>
+  
+          <div class="d-grid">
+            <button type="submit" class="btn btn-lg" style="background-color: #39ff14;">
+              <strong>Anular cita</strong>
+            </button>
+          </div>
+        </form>
+  
+        {% if mensaje %}
+          <div class="alert alert-success mt-3 text-center">
+            {{ mensaje }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+<div class="p-3 mb-2 ">
+   
+  <div class="row justify-content-center text-center">
+    <a class="nav-link" href="{{ url_for('index') }}"><u>Inicio</u></a>
+  </div>
+  
+
+  <footer class="bg-dark text-white text-center py-4 mt-5">
+    <div class="container">
+      <p class="mb-3 fs-5">Síguenos en redes sociales</p>
+      
+      <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-4">
+        
+        <a href="https://www.instagram.com/david_vicalvaro98?igsh=Nm1sODZjczl1eHJo" target="_blank" class="text-white d-flex align-items-center gap-2 fs-5">
+          <img src="{{ url_for('static', filename='images/instagram.png') }}" alt="Instagram" style="height: 40px; width: 40px;">
+          @Instagram
+        </a>
+  
+        <a href="https://wa.me/34674641928" target="_blank" class="text-white d-flex align-items-center gap-2 fs-5">
+          <img src="{{ url_for('static', filename='images/whatsapp.png') }}" alt="WhatsApp" style="height: 40px; width: 40px;">
+            @WhatsApp
+        </a>
+  
+        <a href="https://www.tiktok.com/@pepeda98?_t=ZN-8wY9woMP3uY&_r=1
+        " target="_blank" class="text-white d-flex align-items-center gap-2 fs-5">
+          <img src="{{ url_for('static', filename='images/tiktok.png') }}" alt="TikTok" style="height: 40px; width: 40px;">
+          @Mocobarber
+        </a>
+  
+       
+      </div>
+  
+      <p class="mt-4 mb-0 small">&copy; 2025 Moco Barber. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+    
+    
+</body>
+</html>
