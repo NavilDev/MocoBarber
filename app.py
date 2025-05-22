@@ -72,7 +72,7 @@ def citas():
         fecha=fecha,
         hora=hora,
         servicio=servicio,
-        archivo_credenciales="credenciales/credenciales_account.json",
+        archivo_credenciales=os.environ.get("GOOGLE_CREDENTIALS_JSON"),
         calendar_id="Mocobarber032@gmail.com"
     )
         
@@ -156,7 +156,7 @@ def cancelar():
 
         # Configuración de Google Calendar
         SCOPES = ['https://www.googleapis.com/auth/calendar']
-        SERVICE_ACCOUNT_FILE = 'credenciales/credenciales_account.json'
+        SERVICE_ACCOUNT_FILE = os.environ.get("GOOGLE_CREDENTIALS_JSON")
         CALENDAR_ID = 'Mocobarber032@gmail.com'
 
         credentials = service_account.Credentials.from_service_account_file(
