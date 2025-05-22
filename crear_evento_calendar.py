@@ -1,11 +1,15 @@
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from datetime import datetime, timedelta
+import json
+import os
 
-def crear_evento(nombre, telefono, fecha, hora, archivo_credenciales, calendar_id):
+def crear_evento(nombre, telefono, fecha, hora, servicio, archivo_credenciales, calendar_id):
+
+
     SCOPES = ['https://www.googleapis.com/auth/calendar']
-    credentials = service_account.Credentials.from_service_account_file(
-        archivo_credenciales, scopes=SCOPES)
+    SERVICE_ACCOUNT_FILE = archivo_credenciales
+    credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 
     service = build('calendar', 'v3', credentials=credentials)
 
@@ -17,10 +21,12 @@ def crear_evento(nombre, telefono, fecha, hora, archivo_credenciales, calendar_i
 
     evento = {
         'summary': f'Cita con {nombre}',
-        'description': f'Teléfono: {telefono}',
+        'description': f'Servicio: {servicio}\nTeléfono: {telefono}',
         'start': {'dateTime': inicio, 'timeZone': 'Europe/Madrid'},
         'end': {'dateTime': fin, 'timeZone': 'Europe/Madrid'},
     }
 
     evento = service.events().insert(calendarId=calendar_id, body=evento).execute()
     print(f"✅ Evento creado: {evento.get('htmlLink')}")
+    
+    return evento.get('id')

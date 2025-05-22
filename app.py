@@ -10,13 +10,17 @@ from crear_evento_calendar import crear_evento
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 from datetime import timedelta  
+from config import DURACIONES_SERVICIOS
+from datetime import datetime, timedelta
+import json
+import os
 
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"mysql+mysqlconnector://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}"
+    f"postgresql+psycopg2://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}"
     f"@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -34,35 +38,17 @@ class Reserva(db.Model):
     servicio = db.Column(db.String(50))
     event_id = db.Column(db.String(255))  # ID del evento en Google Calendar
 
-def crear_evento(nombre, telefono, servicio, fecha, hora, archivo_credenciales, calendar_id):
-    from config import DURACIONES_SERVICIOS
-    from datetime import datetime, timedelta
+   
 
-    # Calcular fecha y hora de fin correctamente
-    inicio_dt = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
-    duracion = DURACIONES_SERVICIOS.get(servicio, 30)
-    fin_dt = inicio_dt + timedelta(minutes=duracion)
 
-    event = {
-        'summary': f'Cita con {nombre}',
-        'description': f'Servicio: {servicio}\nTeléfono: {telefono}',
-        'start': {
-            'dateTime': inicio_dt.isoformat(),
-            'timeZone': 'Europe/Madrid'
-        },
-        'end': {
-            'dateTime': fin_dt.isoformat(),
-            'timeZone': 'Europe/Madrid'
-        }
-    }
 
-    credentials = service_account.Credentials.from_service_account_file(
-        archivo_credenciales, scopes=['https://www.googleapis.com/auth/calendar'])
-    service = build('calendar', 'v3', credentials=credentials)
+    SCOPES = ['https://www.googleapis.com/auth/calendar']
+    with open(os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON"), "r") as f:
+        service_account_info = json.load(f)    
+        credentials = service_account.Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
+        service = build('calendar', 'v3', credentials=credentials)
 
-    evento_creado = service.events().insert(calendarId=calendar_id, body=event).execute()
-    return evento_creado.get('id')
-
+    
 
 # Rutas
 @app.route("/citas", methods=["GET", "POST"])
@@ -86,9 +72,10 @@ def citas():
         fecha=fecha,
         hora=hora,
         servicio=servicio,
-        archivo_credenciales="credenciales/service_account.json",
+        archivo_credenciales="credenciales/credenciales_account.json",
         calendar_id="Mocobarber032@gmail.com"
     )
+        
 
         # Guarda los registros en la base de datos
         nueva = Reserva(nombre=nombre, telefono=telefono,email=email, fecha=fecha, hora=hora, servicio=servicio, event_id=event_id)
@@ -96,8 +83,23 @@ def citas():
         db.session.commit()
 
         # Enviar correos
-        asunto = "Confirmación de cita"
-        cuerpo_cliente = f"Hola {nombre}, tu cita está confirmada para el {fecha} a las {hora}."
+        asunto = " ¡Tu cita está confirmada! 💈"
+        cuerpo_cliente = f'''¡Gracias por reservar tu cita conmigo en MocoBarber!
+
+📅 Fecha: {fecha}
+🕒 Hora: {hora}
+
+Ya tengo todo listo para recibirte y asegurarme de que salgas con el mejor corte y una gran experiencia.
+
+Si necesitas cambiar tu cita o tienes alguna duda, puedes escribirme directamente.
+
+¡Nos vemos pronto en la silla! ✂️
+
+Un saludo'''
+        
+
+        
+        
         cuerpo_barbero = f"📅 Nueva cita: {nombre} reservó el {fecha} a las {hora}. Tel: {telefono}"
 
         enviar_correo(email, asunto, cuerpo_cliente)
@@ -154,7 +156,7 @@ def cancelar():
 
         # Configuración de Google Calendar
         SCOPES = ['https://www.googleapis.com/auth/calendar']
-        SERVICE_ACCOUNT_FILE = 'credenciales/service_account.json'
+        SERVICE_ACCOUNT_FILE = 'credenciales/credenciales_account.json'
         CALENDAR_ID = 'Mocobarber032@gmail.com'
 
         credentials = service_account.Credentials.from_service_account_file(
@@ -173,8 +175,22 @@ def cancelar():
         db.session.commit()
 
         # Enviar correos
-        asunto = "Anulación de cita"
-        cuerpo_cliente = f"Hola {reserva.nombre}, tu cita está anulada para el {fecha} a las {reserva.hora}."
+        asunto = "Tu cita ha sido cancelada ❌"
+        cuerpo_cliente =f'''Hola {reserva.nombre} ,
+
+He recibido la cancelación de tu cita en MocoBarber.
+
+Para el {fecha} a las {reserva.hora}
+
+Lamento que no podamos vernos esta vez, pero entiendo que a veces surgen imprevistos. 
+
+Cuando estés listo para agendar de nuevo, estaré encantado de atenderte y dejarte impecable como siempre.
+
+Puedes reservar tu próxima cita en cualquier momento desde web o escribiéndome directamente.
+
+¡Hasta pronto!'''
+        
+        
         cuerpo_barbero = f"📅 Anulación cita: {reserva.nombre} canceló la cita para el {fecha} a las {reserva.hora}. Tel: {telefono}"
 
         enviar_correo(reserva.email, asunto, cuerpo_cliente)

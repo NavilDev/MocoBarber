@@ -1,4 +1,3 @@
-# config.py
 
 # Configuración base
 HORARIOS_DISPONIBLES = [
