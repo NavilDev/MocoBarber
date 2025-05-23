@@ -79,6 +79,12 @@
                                   {% endfor %}
                               </select>
                           </div>
+
+                            <div id="spinner" class="text-center my-3" style="display: none;">
+                              <div class="spinner-border text-success" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                              </div>
+                            </div>
           
                           <div class="d-grid">
                               <button type="submit" class="btn btn-lg" style="background-color: #39ff14;"><strong>Reservar</strong></button>
@@ -123,7 +129,20 @@
     </div>
   </footer>
 
-    
+    <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form[method='post']");
+    const spinner = document.getElementById("spinner");
+
+    if (form) {
+      form.addEventListener("submit", function () {
+        spinner.style.display = "block";
+        const submitBtn = form.querySelector("button[type='submit']");
+        if (submitBtn) submitBtn.disabled = true;
+      });
+    }
+  });
+</script>
     
 </body>
 </html>
