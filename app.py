@@ -16,6 +16,8 @@ import json
 import os
 
 
+
+# Cargar las variables del .env
 load_dotenv()
 
 app = Flask(__name__)
@@ -39,7 +41,6 @@ class Reserva(db.Model):
     event_id = db.Column(db.String(255))  # ID del evento en Google Calendar
 
    
-
 
 
     SCOPES = ['https://www.googleapis.com/auth/calendar']
