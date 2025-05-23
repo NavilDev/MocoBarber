@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, text
 from datetime import datetime
 from config import HORARIOS_DISPONIBLES, DURACIONES_SERVICIOS
 from utils.email_utils import enviar_correo
@@ -203,6 +203,16 @@ Puedes reservar tu próxima cita en cualquier momento desde web o escribiéndome
         return render_template("confirmar_cancel.html", mensaje="Reserva cancelada correctamente.")
 
     return render_template("cancelar.html")
+
+#Utilizamos esta ruta para hacer un ping a la base de datos desde neon
+#para que no se duerma la base de datos
+@app.route("/db_ping")
+def db_ping():
+    try:
+        result = db.session.execute(text("SELECT 1")).scalar()
+        return "DB alive", 200
+    except Exception as e:
+        return f"DB error: {str(e)}", 500
 
 if __name__ == "__main__":
     with app.app_context():
