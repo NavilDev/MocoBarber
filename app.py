@@ -1,7 +1,8 @@
 import os
+from sqlalchemy import text
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect
-from flask_sqlalchemy import SQLAlchemy, text
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from config import HORARIOS_DISPONIBLES, DURACIONES_SERVICIOS
 from utils.email_utils import enviar_correo
