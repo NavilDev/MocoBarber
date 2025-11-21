@@ -3,6 +3,7 @@ from googleapiclient.discovery import build
 from datetime import datetime, timedelta
 import json
 import os
+from config import DURACIONES_SERVICIOS
 
 def crear_evento(nombre, telefono, fecha, hora, servicio, archivo_credenciales, calendar_id):
 
@@ -15,7 +16,11 @@ def crear_evento(nombre, telefono, fecha, hora, servicio, archivo_credenciales, 
 
     inicio = f"{fecha}T{hora}:00"
     hora_dt = datetime.strptime(hora, "%H:%M")
-    hora_fin_dt = hora_dt + timedelta(minutes=30)
+    
+    # Obtener duración del servicio (default 30 min si no existe)
+    duracion = DURACIONES_SERVICIOS.get(servicio, 30)
+    hora_fin_dt = hora_dt + timedelta(minutes=duracion)
+    
     hora_fin = hora_fin_dt.strftime("%H:%M")
     fin = f"{fecha}T{hora_fin}:00"
 
