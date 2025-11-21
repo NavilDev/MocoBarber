@@ -2,7 +2,10 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 
 def main():
     # Define los scopes que necesitas
-    SCOPES = ['https://www.googleapis.com/auth/calendar']
+    SCOPES = [
+        'https://www.googleapis.com/auth/calendar',
+        'https://www.googleapis.com/auth/gmail.send'
+    ]
 
     # Ruta a tu archivo client_secret.json
     CLIENT_SECRET_FILE = '/Users/navilkabbouch/Documents/ProyectosPython/Barberia/barberia_app/credenciales/client_secret.json'
