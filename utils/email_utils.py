@@ -24,19 +24,19 @@ def enviar_correo_async(destinatario, asunto, cuerpo):
         import socket
         smtp_server = 'smtp.gmail.com'
         smtp_ip = socket.gethostbyname(smtp_server)
-        print(f"IP resuelta para smtp.gmail.com: {smtp_ip}")
+        print(f"IP resuelta para smtp.gmail.com: {smtp_ip}", flush=True)
         
-        with smtplib.SMTP(smtp_ip, 587) as server:
-            server.set_debuglevel(1) # Enable SMTP debug output
-            print("Conectando al servidor SMTP...")
+        print("Conectando al servidor SMTP...", flush=True)
+        with smtplib.SMTP(smtp_ip, 587, timeout=30) as server:
+            server.set_debuglevel(1) 
             server.starttls()
-            print("Iniciando sesión...")
+            print("Iniciando sesión...", flush=True)
             server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            print("Enviando mensaje...")
+            print("Enviando mensaje...", flush=True)
             server.send_message(msg)
-        print(f"✅ Correo enviado exitosamente a {destinatario}")
+        print(f"✅ Correo enviado exitosamente a {destinatario}", flush=True)
     except Exception as e:
-        print(f"❌ Error CRÍTICO enviando correo: {e}")
+        print(f"❌ Error CRÍTICO enviando correo: {e}", flush=True)
 
 def enviar_correo(destinatario, asunto, cuerpo):
     thread = threading.Thread(target=enviar_correo_async, args=(destinatario, asunto, cuerpo))
