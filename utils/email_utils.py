@@ -19,7 +19,12 @@ def enviar_correo_async(destinatario, asunto, cuerpo):
     msg.attach(MIMEText(cuerpo, 'plain'))
 
     try:
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        # Force IPv4 resolution
+        import socket
+        smtp_server = 'smtp.gmail.com'
+        smtp_ip = socket.gethostbyname(smtp_server)
+        
+        with smtplib.SMTP(smtp_ip, 587) as server:
             server.starttls()
             server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             server.send_message(msg)
