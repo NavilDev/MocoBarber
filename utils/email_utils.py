@@ -26,10 +26,9 @@ def enviar_correo_async(destinatario, asunto, cuerpo):
         smtp_ip = socket.gethostbyname(smtp_server)
         print(f"IP resuelta para smtp.gmail.com: {smtp_ip}", flush=True)
         
-        print("Conectando al servidor SMTP...", flush=True)
-        with smtplib.SMTP(smtp_ip, 587, timeout=30) as server:
+        print("Conectando al servidor SMTP (SSL)...", flush=True)
+        with smtplib.SMTP_SSL(smtp_ip, 465, timeout=30) as server:
             server.set_debuglevel(1) 
-            server.starttls()
             print("Iniciando sesión...", flush=True)
             server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             print("Enviando mensaje...", flush=True)
