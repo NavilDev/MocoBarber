@@ -9,7 +9,9 @@ load_dotenv()
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
-def enviar_correo(destinatario, asunto, cuerpo):
+import threading
+
+def enviar_correo_async(destinatario, asunto, cuerpo):
     msg = MIMEMultipart()
     msg['From'] = EMAIL_ADDRESS
     msg['To'] = destinatario
@@ -23,3 +25,7 @@ def enviar_correo(destinatario, asunto, cuerpo):
         print(f"Correo enviado a {destinatario}")
     except Exception as e:
         print(f"Error enviando correo: {e}")
+
+def enviar_correo(destinatario, asunto, cuerpo):
+    thread = threading.Thread(target=enviar_correo_async, args=(destinatario, asunto, cuerpo))
+    thread.start()
