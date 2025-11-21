@@ -19,7 +19,8 @@ def enviar_correo_async(destinatario, asunto, cuerpo):
     msg.attach(MIMEText(cuerpo, 'plain'))
 
     try:
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
             server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             server.send_message(msg)
         print(f"Correo enviado a {destinatario}")
